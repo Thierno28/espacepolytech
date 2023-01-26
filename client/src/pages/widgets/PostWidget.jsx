@@ -5,10 +5,11 @@ import TextField from "@mui/material/TextField";
 // import DialogContent from "@mui/material/DialogContent";
 // import DialogContentText from "@mui/material/DialogContentText";
 // import DialogTitle from "@mui/material/DialogTitle";
-import SendIcon from "@mui/icons-material/Send";
+
 
 
 import {
+  AddComment,
   ChatBubbleOutlineOutlined,
   FavoriteBorderOutlined,
   FavoriteOutlined,
@@ -69,8 +70,36 @@ const PostWidget = ({
   //   setOpen(false);
   // };
 
-  const handleSubmit = () => {
-    console.log(comment);
+  // const formData = new FormData();
+  //   formData.append("userId", _id);
+  //   formData.append("description", post);
+  //   if (image) {
+  //     formData.append("picture", image);
+  //     formData.append("picturePath", image.name);
+  //   }
+
+  //   const response = await fetch(`http://localhost:3001/posts`, {
+  //     method: "POST",
+  //     headers: { Authorization: `Bearer ${token}` },
+  //     body: formData,
+  //   });
+  //   const posts = await response.json();
+  //   dispatch(setPosts({ posts }));
+  //   setImage(null);
+  //   setPost("");
+
+
+  const addComment = async () => {
+    const response = await fetch(`http://localhost:3001/posts/comment/${postId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId: loggedInUserId,comment:`${comment}` }),
+    });
+    const updatedPost = await response.json();
+    dispatch(setPost({ post: updatedPost }));
     setComment("");
   };
 
@@ -156,23 +185,23 @@ const PostWidget = ({
               }}
               onChange={(e) => setComment(e.target.value)}
             />
-            <IconButton onClick={handleSubmit}>
-              <SendIcon />
+            <IconButton onClick={addComment}>
+              <AddComment />
             </IconButton>
           </FlexBetween>
           <Box mt="0.5rem">
             {comments.map((comment, i) => (
-              <Box key={`${name}-${i}`}>
+              <Box key={`${comment.firstName}-${i}`}>
                 <Divider />
                 <Box>
                   <UserComment
-                    friendId={postUserId}
-                    name={name}
-                    subtitle={location}
-                    userPicturePath={userPicturePath}
+                   friendId={comment.userId}
+                   name={comment.firstName}
+                   subtitle={comment.location}
+                   userPicturePath={comment.picturePath}
                   />
                   <Typography sx={{ color: main, m: "0.3rem 2rem", pl: "1rem" }}>
-                    {comment}
+                    {comment.comment}
                   </Typography>
                 </Box>
               </Box>

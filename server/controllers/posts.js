@@ -74,17 +74,27 @@ export const likePost = async (req, res) => {
 
 export const addComment = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { userId, comments } = req.body;
-    const post = await Post.findById(id);
+    const postId = req.params.id;
+    const { userId, comment } = req.body;
+    const user = await User.findById(userId);
     const updatedPost = await Post.findByIdAndUpdate(
-      id,
+      postId,
       {
-        comments: [...post.comments, { userId, comments }],
+        $push: {
+          comments: {
+            userId,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            location: user.location,
+            picturePath: user.picturePath,
+            comment,
+          },
+        },
       },
       { new: true }
     );
 
+    console.log(updatedPost);
     res.status(200).json(updatedPost);
   } catch (err) {
     res.status(404).json({ message: err.message });
