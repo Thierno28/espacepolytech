@@ -99,6 +99,7 @@ const PostWidget = ({
           </DialogActions>
         </Dialog>
       </div> */}
+      
       <Friend
         friendId={postUserId}
         name={name}

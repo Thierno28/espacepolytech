@@ -13,7 +13,8 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
-    const data = await response.json();
+    var data = await response.json();
+    data = data.reverse();
     dispatch(setPosts({ posts: data }));
   };
 

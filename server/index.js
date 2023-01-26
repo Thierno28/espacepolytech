@@ -14,6 +14,8 @@ import postRoutes from "./routes/posts.js";
 import { register } from "./controllers/auth.js";
 import { createPost } from "./controllers/posts.js";
 import { verifyToken } from "./middleware/auth.js";
+import http from "http";
+import { Server } from "socket.io";
 import User from "./models/User.js";
 import Post from "./models/Post.js";
 import { users, posts } from "./data/index.js";
@@ -53,18 +55,21 @@ app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 
 /* MONGOOSE SETUP */
-const PORT = process.env.PORT ;
+const PORT = process.env.PORT;
+const httpServer = http.createServer(app);
+const io = new Server(httpServer, {
+});
 mongoose
   .connect(
     "mongodb://localhost:27017/espacepolytech"
-  //   process.env.MONGO_URL, {
-  //   useNewUrlParser: true,
-  //   useUnifiedTopology: true,
-  // }
+    //   process.env.MONGO_URL, {
+    //   useNewUrlParser: true,
+    //   useUnifiedTopology: true,
+    // }
   )
   .then(() => {
     console.log("MongoDB connected successfully");
-    app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+    httpServer.listen(PORT, () => console.log(`Server Port: ${PORT}`));
 
     /* ADD DATA ONE TIME */
     // User.insertMany(users);
